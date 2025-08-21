@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, shrink-to-fit=no"/>
+<title>Matriz de Liderazgo — matrices más suaves + espaciado</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --magenta:#ef4573;
+    --ink:#222;
+    --muted:#6b7280;
+    --bg:#fafafa;
+    --card:#fff;
+    --border:#e6e6e6;
+    --success:#28a745;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Lato', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    font-size:clamp(16px, 3.8vw, 18px);
+    line-height:1.45;
+    -webkit-text-size-adjust:100%;
+    padding:16px;
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  .container{max-width:980px; margin:0 auto; width:100%}
+  header .container{ text-align:center }
+  h1{
+    font-weight:300; color:var(--magenta); margin:0;
+    font-size:clamp(26px, 6.2vw, 40px);
+    letter-spacing:.2px;
+  }
+  .sub{ margin:6px auto 14px; color:var(--muted); font-size:clamp(15px, 3.8vw, 18px); max-width:720px; text-align:center }
+
+  .grid{ display:grid; gap:14px; grid-template-columns:1fr 1fr }
+  @media (max-width: 980px){ .grid{ grid-template-columns:1fr } }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.04);
+    padding:16px;
+  }
+  @media (max-width: 480px){ .card{ padding:12px } }
+
+  .section-title{ color:var(--magenta); font-weight:900; letter-spacing:.2px; margin:2px 0 8px; font-size:1.05em }
+
+  label{display:block; margin:12px 0 6px; font-weight:700}
+  .help{font-size:.86em; color:var(--muted); margin:2px 0 10px}
+
+  /* Más separación vertical entre controles: sutil */
+  .tap-wrap{ position:relative; border-radius:12px; overflow:hidden; margin:8px 0 14px }
+  @media (min-width: 981px){
+    .tap-wrap{ margin:10px 0 16px } /* un toque más en desktop */
+  }
+  .tap-wrap:has(select:disabled), .tap-wrap:has(button:disabled){ opacity:.7 }
+
+  select.sel{
+    width:100%;
+    padding:10px 40px 10px 12px;
+    min-height:44px;
+    font-size:1.05em; font-weight:900;
+    color:#fff; background:var(--magenta);
+    border:none; border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,.06);
+    line-height:1.2;
+    outline:none;
+    transition:transform .06s ease, box-shadow .2s ease, filter .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    appearance:none;
+    background-image:
+      linear-gradient(transparent, transparent),
+      url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"white\"><path d=\"M7 10l5 5 5-5z\"/></svg>');
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    background-size:20px 20px;
+  }
+  select.sel:hover{ filter:brightness(1.03) }
+  select.sel:focus{ box-shadow:0 0 0 3px rgba(239,69,115,.25), 0 6px 16px rgba(239,69,115,.18) }
+  select.sel:active{ transform:translateY(1px) scale(.998); box-shadow:0 2px 8px rgba(239,69,115,.12) }
+
+  .controls{ margin-top:12px }
+  button#btn{
+    width:100%; min-height:46px; padding:12px 14px;
+    font-size:1.06em; font-weight:900; color:#fff;
+    background:var(--success); border:none; border-radius:12px;
+    box-shadow:0 6px 12px rgba(40,167,69,.18);
+    transition:transform .06s ease, box-shadow .2s ease, filter .15s ease;
+    -webkit-tap-highlight-color: transparent; outline:none;
+  }
+  button#btn:hover{ filter:brightness(1.03) }
+  button#btn:focus{ box-shadow:0 0 0 3px rgba(40,167,69,.25), 0 6px 16px rgba(40,167,69,.18) }
+  button#btn:active{ transform:translateY(1px) scale(.998); box-shadow:0 2px 8px rgba(40,167,69,.12) }
+  button#btn:disabled{ background:#a7d9b7; box-shadow:none }
+
+  .ripple{ position:absolute; border-radius:50%; pointer-events:none; transform:scale(0); opacity:.35; background:#fff; mix-blend-mode:soft-light; animation:ripple .45s ease-out forwards }
+  @keyframes ripple{ to{ transform:scale(1); opacity:0 } }
+
+  /* Tablas: tipografía NO en negrita */
+  .table-scroll{ width:100%; overflow:auto; border:1px solid var(--border); border-radius:12px; background:#fff }
+  table{ border-collapse:collapse; width:100%; min-width:560px }
+  th,td{ border:1px solid #ddd; padding:8px; text-align:center; height:50px; font-size:.94em; font-weight:400 }
+  th{ background:#f3f4f6 }
+  td.highlight{ background:var(--magenta); color:#fff; font-weight:700 } /* resalta sin llegar al 900 */
+  .rotated{ writing-mode: horizontal-tb !important; transform:none !important }
+
+  footer{ margin-top:auto; text-align:center; padding:14px; font-size:.9em; color:var(--magenta); font-weight:700; background:#f3f4f6; border-top:2px solid var(--magenta) }
+</style>
+</head>
+<body>
+<header>
+  <div class="container" id="top">
+    <h1>Matriz de Liderazgo</h1>
+    <p class="sub">Evaluación de aptitudes, actitudes, resultados e intención de crecimiento</p>
+  </div>
+</header>
+
+<main class="container">
+  <div class="grid">
+    <section class="card">
+      <div class="section-title">Entradas</div>
+
+      <label>ACTITUD</label>
+      <p class="help">Escala 1–4 (1 = bajo, 4 = alto)</p>
+
+      <label for="act1">1) ¿Qué tan entusiasmada está con su negocio?</label>
+      <div class="tap-wrap"><select class="sel" id="act1"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="act2">2) ¿Tiene objetivo claro? ¿Cuál?</label>
+      <div class="tap-wrap"><select class="sel" id="act2"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="act3">3) ¿Comparte el negocio a otras personas?</label>
+      <div class="tap-wrap"><select class="sel" id="act3"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="act4">4) ¿Quiere crecer ella y su negocio?</label>
+      <div class="tap-wrap"><select class="sel" id="act4"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="act5">5) ¿Siente orgullo de ser empresaria?</label>
+      <div class="tap-wrap"><select class="sel" id="act5"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label style="margin-top:10px">APTITUD</label>
+      <p class="help">Conocimiento del catálogo, cálculo de ganancias, herramientas, etc.</p>
+
+      <label for="apt1">1) ¿Conoce los productos y el catálogo?</label>
+      <div class="tap-wrap"><select class="sel" id="apt1"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="apt2">2) ¿Sabe calcular sus ganancias?</label>
+      <div class="tap-wrap"><select class="sel" id="apt2"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="apt3">3) ¿Puede explicar claramente el modelo Empresarial Bagués?</label>
+      <div class="tap-wrap"><select class="sel" id="apt3"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="apt4">4) ¿Conoce las características y beneficios de cada nivel de alianza?</label>
+      <div class="tap-wrap"><select class="sel" id="apt4"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label for="apt5">5) ¿Conoce las herramientas como Mireb, Dora, Delfín, etc.?</label>
+      <div class="tap-wrap"><select class="sel" id="apt5"><option disabled selected value="">Seleccionar</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+
+      <label style="margin-top:10px" for="res">RESULTADOS</label>
+      <p class="help">Cómo le está yendo hoy (ventas, equipo, metas alcanzadas).</p>
+      <div class="tap-wrap">
+        <select class="sel" id="res">
+          <option disabled selected value="">Seleccionar</option>
+          <option value="--">Sin resultados</option>
+          <option value="-">Bajos</option>
+          <option value="+">Buenos</option>
+          <option value="++">Altos</option>
+        </select>
+      </div>
+
+      <label style="margin-top:10px" for="int">INTENCIÓN DE CRECER</label>
+      <p class="help">¿Quiere mantener o avanzar?</p>
+      <div class="tap-wrap">
+        <select class="sel" id="int">
+          <option disabled selected value="">Seleccionar</option>
+          <option value="no">No tiene intención</option>
+          <option value="mantener">Mantenerse</option>
+          <option value="crecer">Quiere crecer</option>
+          <option value="crecer+">Quiere crecer (ambicioso)</option>
+        </select>
+      </div>
+
+      <div class="controls tap-wrap">
+        <button disabled id="btn">Generar plan de acción</button>
+      </div>
+      <p class="help">El botón se habilita cuando todas las entradas tienen un valor.</p>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Perfil actitud y aptitud</div>
+      <div class="table-scroll">
+        <table>
+          <caption style="caption-side: top; padding:6px; font-size:.86em; color:#6b7280; font-weight:400;">Ejes: Vertical = Actitud · Horizontal = Aptitud</caption>
+          <tr><th></th><th>-- Aptitud</th><th>- Aptitud</th><th>+ Aptitud</th><th>++ Aptitud</th></tr>
+          <tr><th class="rotated">++ Actitud</th><td id="c0_0"></td><td id="c0_1"></td><td id="c0_2"></td><td id="c0_3"></td></tr>
+          <tr><th class="rotated">+ Actitud</th><td id="c1_0"></td><td id="c1_1"></td><td id="c1_2"></td><td id="c1_3"></td></tr>
+          <tr><th class="rotated">- Actitud</th><td id="c2_0"></td><td id="c2_1"></td><td id="c2_2"></td><td id="c2_3"></td></tr>
+          <tr><th class="rotated">-- Actitud</th><td id="c3_0"></td><td id="c3_1"></td><td id="c3_2"></td><td id="c3_3"></td></tr>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:10px; border:1px dashed #e6e6e6;">
+        <div style="color:var(--magenta); margin-bottom:8px; font-weight:400;">Resultados e Intención de Crecimiento</div>
+        <div class="table-scroll">
+          <table style="min-width:480px">
+            <tr><th></th><th>Sin intención / Mantener</th><th>Crecer / Crecer+</th></tr>
+            <tr><th>+ / ++ Resultados</th><td id="ri_1_0"></td><td id="ri_1_1"></td></tr>
+            <tr><th>-- / - Resultados</th><td id="ri_0_0"></td><td id="ri_0_1"></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="result" id="result" style="margin-top:10px">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px">
+          <span class="badge" id="bPerfil" style="background:var(--magenta); color:#fff; padding:6px 10px; border-radius:999px; font-weight:900; font-size:.86em; margin-right:6px;">Perfil</span>
+          <span class="badge" id="bRes" style="background:var(--magenta); color:#fff; padding:6px 10px; border-radius:999px; font-weight:900; font-size:.86em; margin-right:6px;">Resultados</span>
+          <span class="badge" id="bInt" style="background:var(--magenta); color:#fff; padding:6px 10px; border-radius:999px; font-weight:900; font-size:.86em; margin-right:6px;">Intención</span>
+        </div>
+        <div class="plan" style="border:2px solid var(--magenta); border-radius:12px; padding:12px;">
+          <h3 style="margin:0 0 6px; color:var(--magenta); font-size:1.1em; font-weight:900">Plan de acción personalizado</h3>
+          <div class="muted" id="plan-text">Completá las entradas y generá el plan.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>© 2025 Matriz de Liderazgo — Herramienta interactiva</footer>
+
+<script>
+  /* ------- Microinteracciones ------- */
+  function addRipple(e, wrap){
+    const rect = wrap.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.25;
+    const x = (e.clientX || (rect.left + rect.width/2)) - rect.left - size/2;
+    const y = (e.clientY || (rect.top + rect.height/2)) - rect.top - size/2;
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    r.style.width = r.style.height = size + 'px';
+    r.style.left = x + 'px';
+    r.style.top  = y + 'px';
+    wrap.appendChild(r);
+    setTimeout(()=>{ r.remove(); }, 460);
+  }
+  function bindTactile(wrap){
+    wrap.addEventListener('pointerdown', (e)=>{
+      if(e.button !== 0 && e.pointerType !== 'touch') return;
+      addRipple(e, wrap);
+    });
+  }
+  document.querySelectorAll('.tap-wrap').forEach(bindTactile);
+
+  /* ------- Lógica funcional ------- */
+  const selects = Array.from(document.querySelectorAll('select.sel'));
+  const btn = document.getElementById('btn');
+
+  function allFilled(){ return selects.every(s => s.value !== ''); }
+  function updateBtn(){ btn.disabled = !allFilled(); }
+  selects.forEach(s => s.addEventListener('change', updateBtn));
+
+  function avg(vals){ const n=vals.length; const t=vals.reduce((a,b)=>a+Number(b),0); return t/n; }
+  function clasif(v){ if(v>=3.5)return'++'; if(v>=2.5)return'+'; if(v>=1.5)return'-'; return'--'; }
+
+  const basePlans = {'++ ++':{objetivo:`Expandir su liderazgo y guiar a otros líderes hacia el próximo nivel de alianza.`,acciones:[`Conectar su crecimiento con un sueño grande y motivador.`,`Definir metas claras con indicadores de desempeño en equipo e individuales.`,`Ejecutar al menos 3 acciones de incorporación en las próximas 4 semanas.`],indicador:`Alcanzar el siguiente nivel de alianza y consolidar un equipo de líderes activos.`},'++ +':{objetivo:`Fortalecer su conocimiento del negocio para acelerar resultados y expansión.`,acciones:[`Organizar una agenda semanal enfocada en resultados.`,`Detectar qué temas necesita reforzar y trazar un plan de capacitación en la Academia de Emprendedores.`,`Obtener al menos 1 certificación por ciclo.`],indicador:`Mejora de indicadores alcanzando metas antes de lo habitual, reflejando aprendizajes nuevos.`},'+ ++':{objetivo:`Conectar su propósito personal con el negocio, convirtiendo su conocimiento en impacto.`,acciones:[`Reunión individual para identificar sueños y metas.`,`Establecer objetivos a corto y mediano plazo vinculados a esos sueños.`,`Presentar ejemplos de éxito de líderes cercanos.`],indicador:`Cumple metas parciales y participa activamente en reuniones de equipo.`},'++ -':{objetivo:`Adquirir y aplicar nuevos conocimientos que faciliten su fortalecimiento en su negocio.`,acciones:[`Diagnóstico de áreas a mejorar.`,`Diseñar un plan de capacitación personalizada (Academia + mentorías).`,`Comprometerse con encuentros grupales e individuales para aplicar lo aprendido.`],indicador:`Domina al menos 3 habilidades nuevas y avanza hacia el próximo nivel.`},'+ +':{objetivo:`Lograr un crecimiento equilibrado y sostenido.`,acciones:[`Proponer un reto mensual con un objetivo concreto y alcanzable.`,`Participar en un programa de aprendizaje quincenal en la Academia de Emprendedores.`,`Presentar los avances en una reunión de equipo para reforzar el compromiso y motivación.`],indicador:`Cumple el reto mensual y evidencia mejora observable en su desempeño.`},'- ++':{objetivo:`Reconectar su motivación y propósito, aprovechando su gran capacidad técnica.`,acciones:[`Sesión de mentoría enfocada en propósito y valores personales.`,`Fijar metas simples semanales con seguimiento cercano.`,`Participar como apoyo en la capacitación de otros, transmitiendo su conocimiento para reavivar la motivación.`],indicador:`Recupera motivación y compromiso en menos de un mes.`},'++ --':{objetivo:`Canalizar su energía en construir una base sólida de conocimiento.`,acciones:[`Capacitación intensiva básica (catálogo, modelo de negocio, ganancias).`,`Checklist diario de hábitos simples (15 minutos).`,`Acompañamiento semanal en mentoría para validar lo aprendido y corregir dudas.`],indicador:`Completa con éxito el plan básico en 14 días.`},'+ -':{objetivo:`Elevar sus conocimientos técnicos para respaldar su motivación.`,acciones:[`Realizar un curso corto y ponerlo en práctica con feedback inmediato.`,`Practicar un guión de presentación semanal con seguimiento.`,`Participar en simulaciones o role plays dentro de su equipo para ganar confianza.`],indicador:`Aplica lo aprendido en campo y demuestra mejoras visibles.`},'- +':{objetivo:`Reactivar su compromiso y propósito a través de logros.`,acciones:[`Mentoría 1 a 1 para redescubrir su motivación y propósito.`,`Participar en capacitación práctica mensual de un tema clave.`,`Establecer un objetivo corto con celebración de logro para recuperar entusiasmo.`],indicador:`Actitud positiva sostenida durante 4 semanas y aplicación práctica.`},'-- ++':{objetivo:`Redirigir su potencial y motivar a encauzar su negocio.`,acciones:[`Conversación de propósito y futuro en el negocio.`,`Definir micro-hábitos con soporte cercano.`,`Asignar un rol de responsabilidad en una reunión o actividad para despertar compromiso.`],indicador:`Retoma compromiso y cumple primeras metas.`},'+ --':{objetivo:`Aprovechar su motivación para sentar bases de conocimiento.`,acciones:[`Plan de formación básica guiada y evaluada en la Academia.`,`Acompañamiento cercano dos veces por semana.`,`Preparar una autoevaluación de aprendizaje al cierre del ciclo de capacitación.`],indicador:`Acredita aprendizajes iniciales en 2 semanas.`},'-- +':{objetivo:`Generar motivación y compromiso apoyándose en su conocimiento.`,acciones:[`Espacio de orientación para redescubrir propósito y sueños.`,`Asignar una tarea práctica de impacto inmediato.`,`Reconocer públicamente sus logros en equipo para reforzar autoestima y motivación.`],indicador:`Cumple metas mínimas en 14 días.`},'- -':{objetivo:`Clarificar expectativas y activar su propósito.`,acciones:[`Mentoría para alinear sueños con su negocio.`,`Diseñar un plan corto de 3 acciones simples.`,`Iniciar una rutina de capacitación básica y compartir avances en equipo.`],indicador:`Cumple el plan acordado y muestra señales de continuidad.`},'-- -':{objetivo:`Identificar si existe verdadera disposición para aprender y crecer.`,acciones:[`Proponer un plan de prueba de 7 días con objetivos claros.`,`Formación básica obligatoria en la Academia de Emprendedores.`,`Realizar una reunión de seguimiento al finalizar la semana para definir próximos pasos.`],indicador:`Completa el plan de prueba y demuestra compromiso inicial.`},'- --':{objetivo:`Generar interés y compromiso inicial para avanzar en su negocio.`,acciones:[`Reunión 1 a 1 para motivar y reforzar propósito.`,`Identificar aspectos críticos de mejora.`,`Definir una acción semanal con seguimiento intensivo.`],indicador:`Asume compromiso y cumple acciones semanales en 30 días.`},'-- --':{objetivo:`Redefinir su rumbo y sentar bases mínimas para continuar.`,acciones:[`Mentoría intensiva para conectar con sueños y propósitos.`,`Establecer objetivos inmediatos en indicadores críticos.`,`Plan de acción en capacitación e incorporación básica.`],indicador:`Mejora su actitud y muestra avances en indicadores clave al cierre de ciclo.`}};
+
+  function resultModifier(val){
+    switch(val){
+      case '++': return {titulo:`Preguntas`,puntos:[`¿Sus resultados son constantes o fluctuantes?`,`¿Cuál es el indicador que puede acelerar su crecimiento?`]};
+      case '+':  return {titulo:`Preguntas`,puntos:[`¿Sus resultados positivos son intencionales?`,`¿Tiene fijada la meta hacia el siguiente nivel?`]};
+      case '-':  return {titulo:`Preguntas`,puntos:[`¿Cuál es su punto de dolor más claro?`,`¿Qué acción inmediata impacta ese indicador crítico?`]};
+      case '--': return {titulo:`Preguntas`,puntos:[`¿Cuál de estos 5 puntos mejorar ya: incorporación, cobranza, seguimiento, comunicación, capacitación?`,`Elegir un indicador para enfocarse primero.`]};
+      default: return {titulo:'',puntos:[]};
+    }
+  }
+  function intentModifier(val){
+    switch(val){
+      case 'crecer+': return {titulo:`Proyección`,puntos:[`Diseñar plan de carrera con 2 metas a corto plazo y 1 a mediano.`,`Dar participación en espacios del equipo (ej. mini capacitación).`]};
+      case 'crecer':  return {titulo:`Proyección`,puntos:[`Definir objetivo concreto de crecimiento.`,`Reforzar fortalezas y fijar resultados clave.`]};
+      case 'mantener':return {titulo:`Proyección`,puntos:[`Objetivos ambiciosos y alcanzables para mantener motivación.`,`Clarificar expectativas y requerimientos del rol.`]};
+      case 'no':      return {titulo:`Proyección`,puntos:[`Acordar resultados estándar del rol actual.`,`Promover espacios de inspiración para revisar expectativas.`]};
+      default: return {titulo:'',puntos:[]};
+    }
+  }
+
+  function highlightMatrix(act, apt){
+    for(let i=0;i<4;i++){ for(let j=0;j<4;j++){ const c=document.getElementById(`c${i}_${j}`); c.classList.remove('highlight'); c.textContent=''; } }
+    const idx={'--':3,'-':2,'+':1,'++':0};
+    const row=idx[act]; const col={'--':0,'-':1,'+':2,'++':3}[apt];
+    const cell=document.getElementById(`c${row}_${col}`); if(cell){ cell.classList.add('highlight'); cell.textContent='✔'; }
+  }
+  const riMap = (resVal) => (resVal==='++'||resVal==='+')?1:0;
+  const intMap= (iVal) => (iVal==='crecer'||iVal==='crecer+')?1:0;
+  function highlightRI(resVal, intVal){
+    ['ri_0_0','ri_0_1','ri_1_0','ri_1_1'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.classList.remove('highlight'); el.textContent=''; } });
+    const r=riMap(resVal); const i=intMap(intVal);
+    const cell=document.getElementById(`ri_${r}_${i}`); if(cell){ cell.classList.add('highlight'); cell.textContent='✔'; }
+  }
+
+  document.getElementById('btn').addEventListener('click', (e)=>{
+    e.preventDefault(); if(btn.disabled) return;
+    const acts=[act1.value,act2.value,act3.value,act4.value,act5.value];
+    const aClass = clasif(avg(acts));
+    const apts=[apt1.value,apt2.value,apt3.value,apt4.value,apt5.value];
+    const pClass = clasif(avg(apts));
+    const res=document.getElementById('res').value;
+    const intent=document.getElementById('int').value;
+
+    document.getElementById('bPerfil').textContent=`Perfil: ${aClass} Actitud / ${pClass} Aptitud`;
+    document.getElementById('bRes').textContent=`Resultados: ${res}`;
+    document.getElementById('bInt').textContent=`Intención: ${({'no':'No','mantener':'Mantener','crecer':'Crecer','crecer+':'Crecer+'})[intent]}`;
+
+    highlightMatrix(aClass,pClass);
+    highlightRI(res,intent);
+
+    const key=`${aClass} ${pClass}`;
+    const base=basePlans[key];
+    const modR=resultModifier(res);
+    const modI=intentModifier(intent);
+
+    const planDiv=document.getElementById('plan-text');
+    if(!base){ planDiv.innerHTML='<span class="muted">No se encontró plan base para este perfil.</span>'; }
+    else{
+      let html='';
+      html += `<p><strong>Objetivo base:</strong> ${base.objetivo}</p>`;
+      html += '<ul>'; base.acciones.forEach(a=> html += `<li>${a}</li>`); html+='</ul>';
+      html += `<p class="muted"><em>Indicador:</em> ${base.indicador}</p>`;
+      if(modR.puntos.length){ html += `<p><strong>Ajustes por ${modR.titulo}:</strong></p><ul>`; modR.puntos.forEach(p=> html+=`<li>${p}</li>`); html+='</ul>'; }
+      if(modI.puntos.length){ html += `<p><strong>Ajustes por ${modI.titulo}:</strong></p><ul>`; modI.puntos.forEach(p=> html+=`<li>${p}</li>`); html+='</ul>'; }
+      planDiv.innerHTML=html;
+    }
+    document.getElementById('result').style.display='block';
+
+    // Scroll al tope sólo en escritorio
+    const isDesktopLike = window.matchMedia('(pointer: fine)').matches && !/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isDesktopLike){
+      document.getElementById('top').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+</script>
+</body>
+</html>
